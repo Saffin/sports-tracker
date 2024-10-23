@@ -14,16 +14,20 @@ struct SportsListView: View {
     var body: some View {
         ZStack {
             Color.white
-            VStack {
-                self.picker
-                    .padding()
-                if self.$store.state.sports.isEmpty {
-                    Text("No records found. You can add one by pressing the plus button")
+            if self.store.state.isLoading {
+                ProgressView()
+            } else {
+                VStack {
+                    self.picker
                         .padding()
-                } else {
-                    self.list
+                    if self.$store.state.sports.isEmpty {
+                        Text("No records found. You can add one by pressing the plus button")
+                            .padding()
+                    } else {
+                        self.list
+                    }
+                    Spacer()
                 }
-                Spacer()
             }
         }
         .toolbar {
@@ -33,7 +37,7 @@ struct SportsListView: View {
             await self.store.actions?.load()
         }
         .refreshable {
-            await self.store.actions?.load()
+            await self.store.actions?.reloadData()
         }
         .navigationTitle("Sports Tracker")
         .onChange(of: self.store.selectedType) { _, selectedSport in

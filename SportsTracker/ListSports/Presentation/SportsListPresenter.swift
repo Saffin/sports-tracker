@@ -1,20 +1,18 @@
 import Foundation
 import SwiftUI
 
-protocol SportsListCoordinable {
-    func didSelectDetail(_ sport: SportModel)
-}
-
 private enum SportsListPresenterEffect {
     case onLoadAll([SportModel])
     case onLoadLocal([SportModel])
     case onLoadRemote([SportModel])
-    case onDelete
     case onError
     case onSelectionChange(SelectedStorage)
     case onCreateSportTap
     case onSheetDismiss
     case onSaveSuccess
+    case onDelete
+    case showLoading
+    case hideLoading
 }
 
 final class SportsListPresenter {
@@ -45,21 +43,15 @@ final class SportsListPresenter {
 }
 
 extension SportsListPresenter {
-    func load(type: SelectedStorage = .all) async {
-        var sports = [SportModel]()
+    func load() async {
+        effect(.showLoading)
         do {
-            switch type {
-            case .all:
-                sports = try await self.loadSports()
-            case .local:
-                sports = try await self.loadLocalSports()
-            case .remote:
-                sports = try await self.loadRemoteSports()
-            }
+            let sports = try await self.loadSports()
             effect(.onLoadAll(sports))
         } catch {
             effect(.onError)
         }
+        effect(.hideLoading)
     }
     
     func didSelectAddSport() {
@@ -71,12 +63,12 @@ extension SportsListPresenter {
     }
     
     func didSelectDelete(index: IndexSet) {
+        effect(.showLoading)
         index.map { sports[$0] }.forEach { sport in
             if sport.isLocal {
                 Task {
                     do {
                         try await self.localManager.delete(sport.id)
-                        effect(.onDelete)
                     } catch {
                         effect(.onError)
                     }
@@ -85,7 +77,6 @@ extension SportsListPresenter {
                 Task {
                     do {
                         try await self.remoteManager.delete(sport.id)
-                        effect(.onDelete)
                     } catch {
                         effect(.onError)
                     }
@@ -93,9 +84,9 @@ extension SportsListPresenter {
             }
         }
         Task {
-            await self.load()
+            await self.reloadData()
         }
-        
+        effect(.hideLoading)
     }
     
     func didTapFilterSports(_ type: SelectedStorage) {
@@ -119,11 +110,26 @@ extension SportsListPresenter {
     }
     
     func onSheetDismiss() {
-        effect(.onSheetDismiss)
+        Task {
+            await self.reloadData()
+            effect(.onSheetDismiss)
+        }
     }
     
-    func onSaveSuccessReload(storage: SelectedStorage = .all) async {
-        await self.load(type: storage)
+    func reloadData() async {
+        do {
+            let sports = try await self.loadSports()
+            switch self.state.selectedType {
+            case .all:
+                effect(.onLoadAll(sports))
+            case .local:
+                effect(.onLoadLocal(sports.filter { $0.isLocal }))
+            case .remote:
+                effect(.onLoadRemote(sports.filter { $0.isRemote }))
+            }
+        } catch {
+            effect(.onError)
+        }
     }
 }
 
@@ -164,11 +170,13 @@ private extension SportsListPresenter {
         case .onCreateSportTap:
             self.state.isCreateSheetPresented = true
         case .onSaveSuccess:
-            self.state.isConfirmationDialogPresented = false
             self.state.isCreateSheetPresented = false
         case .onSheetDismiss:
-            self.state.isConfirmationDialogPresented = false
             self.state.isCreateSheetPresented = false
+        case .showLoading:
+            self.state.isLoading = true
+        case .hideLoading:
+            self.state.isLoading = false
         }
         self.onStateChange(state)
     }

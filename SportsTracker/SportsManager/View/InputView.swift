@@ -3,6 +3,7 @@ import SwiftUI
 struct InputView: View {
     @Binding var text: String
     let placeholder: String
+    let keyboardType: UIKeyboardType
     
     let maxLength = 50
 
@@ -15,6 +16,7 @@ struct InputView: View {
             axis: .vertical
         )
         .autocorrectionDisabled()
+        .keyboardType(self.keyboardType)
         .padding(.vertical, 8)
         .padding(.horizontal, 16)
         .textFieldStyle(.plain)
@@ -28,7 +30,8 @@ struct InputView: View {
 #Preview {
     InputView(
         text: .constant(""),
-        placeholder: "Name"
+        placeholder: "Name",
+        keyboardType: .alphabet
     )
     .padding()
 }

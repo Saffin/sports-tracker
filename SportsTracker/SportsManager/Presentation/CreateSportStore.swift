@@ -16,7 +16,6 @@ extension CreateSportStore {
             self.state = state
             self.isErrorShown = state.isErrorShown
             self.isConfirmationDialogPresented = state.isConfirmationDialogPresented
-            self.isPresented = state.isPresented
             self.isSaveButtonDisabled = state.isSaveButtonDisabled
         }
     }

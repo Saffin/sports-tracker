@@ -5,7 +5,7 @@ struct CreateSportState: Equatable {
     var date: String = ""
     var errorViewModel: ErrorViewModel? = nil
     var isConfirmationDialogPresented = false
-    var isPresented = false
+    var isLoading = false
 }
 
 extension CreateSportState {

@@ -8,6 +8,8 @@ private enum CreateSportPresenterEffect {
     case onNameChange(String)
     case onLocationChange(String)
     case onDurationChange(String)
+    case showLoading
+    case hideLoading
 }
 
 final class CreateSportPresenter {
@@ -41,14 +43,18 @@ extension CreateSportPresenter {
         storage: SportModel.Storage,
         completion: @escaping () -> Void
     ) async throws {
-        switch storage {
-        case .local:
-            try await self.saveLocal()
-        case .remote:
-            try await self.saveRemote()
+        do {
+            switch storage {
+            case .local:
+                try await self.saveLocal()
+            case .remote:
+                try await self.saveRemote()
+            }
+            effect(.onSaveSuccess)
+        } catch {
+            effect(.onSaveFailure)
         }
         completion()
-        effect(.onSaveSuccess)
     }
     
     func onNameChange(_ text: String) {
@@ -110,8 +116,8 @@ private extension CreateSportPresenter {
         case .onSaveButtonTap:
             self.state.isConfirmationDialogPresented = true
         case .onSaveSuccess:
-            self.state.isConfirmationDialogPresented = false
             self.clearSport()
+            self.state.isConfirmationDialogPresented = false
         case .onSaveFailure:
             self.state.errorViewModel = self.makeGenericError()
         case .onNameChange(let text):
@@ -120,6 +126,10 @@ private extension CreateSportPresenter {
             self.state.location = text
         case .onDurationChange(let text):
             self.state.duration = text
+        case .showLoading:
+            self.state.isLoading = true
+        case .hideLoading:
+            self.state.isLoading = false
         }
         self.onStateChange(state)
     }

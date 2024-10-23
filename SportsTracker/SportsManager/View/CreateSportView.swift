@@ -37,12 +37,7 @@ private extension CreateSportView {
             Spacer()
         }
     }
-    var saveButton : some View {
-        Button("Save") {
-            self.store.actions?.didTapSaveButton()
-            self.onDismiss()
-        }
-    }
+
     var confirmationButtons: some View {
         Group {
             Button("Local") {
@@ -92,7 +87,8 @@ private extension CreateSportView {
                     self.store.actions?.onNameChange(text)
                 }
             ),
-            placeholder: "Name"
+            placeholder: "Name",
+            keyboardType: .alphabet
         )
     }
     
@@ -104,7 +100,8 @@ private extension CreateSportView {
                     self.store.actions?.onLocationChange(text)
                 }
             ),
-            placeholder: "Location"
+            placeholder: "Location",
+            keyboardType: .alphabet
         )
     }
     
@@ -116,7 +113,8 @@ private extension CreateSportView {
                     self.store.actions?.onDurationChange(text)
                 }
             ),
-            placeholder: "Duration"
+            placeholder: "Duration",
+            keyboardType: .numberPad
         )
     }
 }

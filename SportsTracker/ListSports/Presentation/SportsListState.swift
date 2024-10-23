@@ -6,7 +6,6 @@ struct SportsListState: Equatable {
     var selectedType: SelectedStorage = .all
     var isCreateSheetPresented = false
     var errorViewModel: ErrorViewModel? = nil
-    var isConfirmationDialogPresented = false
 }
 
 extension SportsListState {
