@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -36,21 +36,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		429C4A472CC916300034331B /* SportsTracker */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SportsTracker;
-			sourceTree = "<group>";
-		};
-		429C4A5D2CC916320034331B /* SportsTrackerTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SportsTrackerTests;
-			sourceTree = "<group>";
-		};
-		429C4A672CC916320034331B /* SportsTrackerUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SportsTrackerUITests;
-			sourceTree = "<group>";
-		};
+		429C4A472CC916300034331B /* SportsTracker */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SportsTracker; sourceTree = "<group>"; };
+		429C4A5D2CC916320034331B /* SportsTrackerTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SportsTrackerTests; sourceTree = "<group>"; };
+		429C4A672CC916320034331B /* SportsTrackerUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SportsTrackerUITests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +195,7 @@
 				};
 			};
 			buildConfigurationList = 429C4A402CC916300034331B /* Build configuration list for PBXProject "SportsTracker" */;
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -218,7 +207,6 @@
 			packageReferences = (
 				429C4A8B2CC926160034331B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 429C4A462CC916300034331B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
