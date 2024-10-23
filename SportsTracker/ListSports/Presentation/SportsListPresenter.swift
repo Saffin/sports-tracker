@@ -128,6 +128,7 @@ private extension SportsListPresenter {
     func loadSports() async throws -> [SportModel] {
         let remote = try await self.remoteManager.getAll()
         let local = try await self.localManager.getAll()
+        print(RemoteDatabaseAuth.shared.isSignedIn())
         return remote + local
     }
 }

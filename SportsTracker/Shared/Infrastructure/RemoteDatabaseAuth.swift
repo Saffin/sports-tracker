@@ -9,9 +9,7 @@ final class RemoteDatabaseAuth {
     
     static let shared = RemoteDatabaseAuth()
     
-    private init() {
-        FirebaseApp.configure()
-    }
+    private init() {}
     
     func signInAnonymously() async throws {
         do {

@@ -12,7 +12,8 @@ final class SportsManagerRemote: SportsManagerProtocol {
     }
     
     func getAll() async throws -> [SportModel] {
-        []
+        let result = try await self.repository.fetchAll()
+        return map(result)
     }
     
     func map(_ remoteSport: [RemoteSportModel]) -> [SportModel] {

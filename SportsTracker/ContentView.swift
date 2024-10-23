@@ -13,6 +13,9 @@ struct ContentView: View {
                     }
         }
         .navigationTitle("Sports Tracker")
+        .task {
+            try! await RemoteDatabaseAuth.shared.signInAnonymously()
+        }
     }
 }
 
