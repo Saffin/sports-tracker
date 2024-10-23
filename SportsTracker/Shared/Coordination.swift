@@ -44,15 +44,21 @@ final class SportsTrackerCoordinator: ObservableObject {
     }
     
     func dismiss() {
-        if navigation.isEmpty {
+        if self.navigation.isEmpty {
             return
         }
-        navigation.removeLast()
+        DispatchQueue.main.async {
+            self.navigation.removeLast()
+        }
     }
 }
 
 extension SportsTrackerCoordinator: SportsListCoordinable {
     func didSelectAddSport() {
-        navigation.append(SportsTrackerDestination.addSport)
+        self.navigation.append(SportsTrackerDestination.addSport)
+    }
+    
+    func didSelectSave() {
+        self.dismiss()
     }
 }

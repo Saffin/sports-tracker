@@ -2,6 +2,7 @@ import Foundation
 
 protocol SportsListCoordinable {
     func didSelectAddSport()
+    func didSelectSave()
 }
 
 private enum SportsListPresenterEffect {
@@ -72,6 +73,7 @@ extension SportsListPresenter {
         case .remote:
             effect(.onLoadRemote(self.sports.filter { $0.isRemote }))
         }
+        effect(.onSelectionChange(type))
     }
     
     func didSelectLocal() async {
@@ -97,28 +99,32 @@ extension SportsListPresenter {
     func onSave(storage: SportModel.Storage) async throws {
         switch storage {
         case .local:
-            let sport = SportModel(
-                id: UUID(),
-                name: state.name,
-                location: state.location,
-                duration: state.duration,
-                storage: .local
-            )
-            try await self.localManager.save(sport)
+            try await self.saveLocal()
         case .remote:
-            let sport = SportModel(
-                id: UUID(),
-                name: state.name,
-                location: state.location,
-                duration: state.duration,
-                storage: .remote
-            )
-            try await self.remoteManager.save(sport)
+            try await self.saveRemote()
         }
+        self.coordinator?.didSelectSave()
     }
 }
 
 private extension SportsListPresenter {
+    func makeSport(storage: SportModel.Storage) -> SportModel {
+        SportModel(
+            id: UUID(),
+            name: state.name,
+            location: state.location,
+            duration: state.duration,
+            storage: storage
+        )
+    }
+    func saveLocal() async throws {
+        try await self.localManager.save(self.makeSport(storage: .local))
+    }
+    
+    func saveRemote() async throws {
+        try await self.remoteManager.save(self.makeSport(storage: .remote))
+    }
+
     func loadSports() async throws -> [SportModel] {
         let remote = try await self.remoteManager.getAll()
         let local = try await self.localManager.getAll()
@@ -133,10 +139,8 @@ private extension SportsListPresenter {
             self.sports = sports
             self.state.sports = sports
         case .onLoadLocal(let sports):
-            self.sports = sports
             self.state.sports = sports
         case .onLoadRemote(let sports):
-            self.sports = sports
             self.state.sports = sports
         case .onDelete:
             self.state.sports = sports
