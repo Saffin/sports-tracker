@@ -1,10 +1,3 @@
-//
-//  SportsTrackerTests.swift
-//  SportsTrackerTests
-//
-//  Created by David Šafarik on 23.10.2024.
-//
-
 import XCTest
 @testable import SportsTracker
 

@@ -1,10 +1,3 @@
-//
-//  SportsTrackerUITests.swift
-//  SportsTrackerUITests
-//
-//  Created by David Šafarik on 23.10.2024.
-//
-
 import XCTest
 
 final class SportsTrackerUITests: XCTestCase {

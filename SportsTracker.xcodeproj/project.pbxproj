@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		429C4A8D2CC926160034331B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 429C4A8C2CC926160034331B /* FirebaseAuth */; };
+		429C4A8F2CC926160034331B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 429C4A8E2CC926160034331B /* FirebaseFirestore */; };
+		429C4A922CC926470034331B /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 429C4A912CC926470034331B /* FirebaseCore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		429C4A5B2CC916320034331B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				429C4A8D2CC926160034331B /* FirebaseAuth in Frameworks */,
+				429C4A922CC926470034331B /* FirebaseCore in Frameworks */,
+				429C4A8F2CC926160034331B /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +87,7 @@
 				429C4A472CC916300034331B /* SportsTracker */,
 				429C4A5D2CC916320034331B /* SportsTrackerTests */,
 				429C4A672CC916320034331B /* SportsTrackerUITests */,
+				429C4A902CC926470034331B /* Frameworks */,
 				429C4A462CC916300034331B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +100,13 @@
 				429C4A642CC916320034331B /* SportsTrackerUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		429C4A902CC926470034331B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +129,9 @@
 			);
 			name = SportsTracker;
 			packageProductDependencies = (
+				429C4A8C2CC926160034331B /* FirebaseAuth */,
+				429C4A8E2CC926160034331B /* FirebaseFirestore */,
+				429C4A912CC926470034331B /* FirebaseCore */,
 			);
 			productName = SportsTracker;
 			productReference = 429C4A452CC916300034331B /* SportsTracker.app */;
@@ -195,6 +215,9 @@
 			);
 			mainGroup = 429C4A3C2CC916300034331B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				429C4A8B2CC926160034331B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 429C4A462CC916300034331B /* Products */;
 			projectDirPath = "";
@@ -558,6 +581,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		429C4A8B2CC926160034331B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		429C4A8C2CC926160034331B /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 429C4A8B2CC926160034331B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		429C4A8E2CC926160034331B /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 429C4A8B2CC926160034331B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		429C4A912CC926470034331B /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 429C4A8B2CC926160034331B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 429C4A3D2CC916300034331B /* Project object */;
 }

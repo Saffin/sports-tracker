@@ -1,11 +1,3 @@
-//
-//  SportsManagerLocal.swift
-//  SportsTracker
-//
-//  Created by David Šafarik on 23.10.2024.
-//
-
-
 import Foundation
 import CoreData
 
@@ -37,16 +29,5 @@ final class SportsManagerLocal: SportsManagerProtocol {
     
     func delete(_ sport: SportModel) async throws {
         //
-    }
-}
-
-extension SportModel {
-    func toManagedSport(context: NSManagedObjectContext) -> ManagedSport {
-        let sportCD = ManagedSport(context: context)
-        sportCD.id = UUID()
-        sportCD.name = self.name
-        sportCD.location = self.location
-        sportCD.duration = self.duration
-        return sportCD
     }
 }

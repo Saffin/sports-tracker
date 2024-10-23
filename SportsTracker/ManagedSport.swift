@@ -14,18 +14,19 @@ extension ManagedSport {
             id: self.id,
             name: self.name,
             location: self.location,
-            duration: self.duration
+            duration: self.duration,
+            storage: .local
         )
     }
 }
 
-extension SportModel {
-    var coreData: ManagedSport {
-        let managedSport = ManagedSport()
-        managedSport.id = self.id
-        managedSport.name = self.name
-        managedSport.location = self.location
-        managedSport.duration = self.duration
-        return managedSport
+extension SportModel {  
+    func toManagedSport(context: NSManagedObjectContext) -> ManagedSport {
+        let sportCD = ManagedSport(context: context)
+        sportCD.id = UUID()
+        sportCD.name = self.name
+        sportCD.location = self.location
+        sportCD.duration = self.duration
+        return sportCD
     }
 }

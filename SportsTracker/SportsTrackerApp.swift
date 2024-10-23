@@ -1,17 +1,21 @@
-//
-//  SportsTrackerApp.swift
-//  SportsTracker
-//
-//  Created by David Šafarik on 23.10.2024.
-//
-
 import SwiftUI
+import FirebaseCore
 
 @main
 struct SportsTrackerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
     }
+}
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+    return true
+  }
 }

@@ -1,10 +1,3 @@
-//
-//  Persistence.swift
-//  SportsTracker
-//
-//  Created by David Šafarik on 23.10.2024.
-//
-
 import CoreData
 
 struct PersistenceController {
