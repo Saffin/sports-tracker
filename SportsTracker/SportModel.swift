@@ -1,6 +1,6 @@
 import Foundation
 
-struct SportModel: Identifiable {
+struct SportModel: Identifiable, Equatable {
     enum Storage {
         case local
         case remote
@@ -14,6 +14,14 @@ struct SportModel: Identifiable {
 }
 
 extension SportModel {
+    var isLocal: Bool {
+        self.storage == .local
+    }
+    
+    var isRemote: Bool {
+        self.storage == .remote
+    }
+    
     var remote: [String: Any] {
         [
             "id": self.id.uuidString,

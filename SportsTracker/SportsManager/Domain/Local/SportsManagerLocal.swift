@@ -2,14 +2,15 @@ import Foundation
 import CoreData
 
 final class SportsManagerLocal: SportsManagerProtocol {
+    static let shared = SportsManagerLocal()
     private let viewContext: NSManagedObjectContext
-
-    init(context: NSManagedObjectContext = PersistenceController().container.viewContext) {
+    
+    private init(context: NSManagedObjectContext = PersistenceController().container.viewContext) {
         self.viewContext = context
     }
     
     func save(_ sport: SportModel) async throws {
-        let sportCD = sport.toManagedSport(context: self.viewContext)
+        let _ = sport.toManagedSport(context: self.viewContext)
         try self.viewContext.save()
     }
     
