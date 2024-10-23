@@ -1,15 +1,12 @@
 final class CreateSportComposer {
-    static func compose(coordinator: SportsListCoordinable?) -> AnyStore<SportsListStore> {
-        let store = SportsListStore()
-        let localManager = SportsManagerLocal.shared
-        let remoteManager = SportsManagerRemote()
-        let presenter = SportsListPresenter(
+    static func compose() -> AnyStore<CreateSportStore> {
+        let store = CreateSportStore()
+        let presenter = CreateSportPresenter(
             onStateChange: { [weak store] state in
                 store?.update(state: state)
             },
-            coordinator: coordinator,
-            localManager: localManager,
-            remoteManager: remoteManager
+            localManager: SportsManagerLocal.shared,
+            remoteManager: SportsManagerRemote()
         )
         
         store.actions = presenter

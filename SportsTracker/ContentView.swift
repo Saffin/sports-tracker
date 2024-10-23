@@ -1,5 +1,4 @@
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
     @ObservedObject private var coordinator: SportsTrackerCoordinator = .init()

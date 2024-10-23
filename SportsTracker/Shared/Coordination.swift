@@ -20,7 +20,7 @@ final class SportsListComposer {
 }
 
 enum SportsTrackerDestination: Hashable {
-    case addSport
+    case detail(SportModel)
 }
 
 final class SportsTrackerCoordinator: ObservableObject {
@@ -35,11 +35,8 @@ final class SportsTrackerCoordinator: ObservableObject {
     @ViewBuilder
     func getView(for destination: SportsTrackerDestination) -> some View {
         switch destination {
-        case .addSport:
-            CreateSportView(
-                store: CreateSportComposer
-                    .compose(coordinator: self).store
-            )
+        case .detail(let sport):
+            SportDetailView(sport: sport)
         }
     }
     
@@ -54,11 +51,7 @@ final class SportsTrackerCoordinator: ObservableObject {
 }
 
 extension SportsTrackerCoordinator: SportsListCoordinable {
-    func didSelectAddSport() {
-        self.navigation.append(SportsTrackerDestination.addSport)
-    }
-    
-    func didSelectSave() {
-        self.dismiss()
+    func didSelectDetail(_ sport: SportModel) {
+        self.navigation.append(SportsTrackerDestination.detail(sport))
     }
 }

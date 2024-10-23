@@ -1,6 +1,6 @@
 import Foundation
 
-struct SportModel: Identifiable, Equatable {
+struct SportModel: Identifiable, Equatable, Hashable {
     enum Storage {
         case local
         case remote

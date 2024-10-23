@@ -1,8 +1,8 @@
 import Foundation
+import SwiftUI
 
 protocol SportsListCoordinable {
-    func didSelectAddSport()
-    func didSelectSave()
+    func didSelectDetail(_ sport: SportModel)
 }
 
 private enum SportsListPresenterEffect {
@@ -11,24 +11,22 @@ private enum SportsListPresenterEffect {
     case onLoadRemote([SportModel])
     case onDelete
     case onError
-    case onNameChange(String)
-    case onLocationChange(String)
-    case onDurationChange(String)
-    case onSelectionChange(Selected)
-    }
+    case onSelectionChange(SelectedStorage)
+    case onCreateSportTap
+    case onSheetDismiss
+    case onSaveSuccess
+}
 
 final class SportsListPresenter {
     private let onStateChange: (SportsListState) -> Void
     private let coordinator: SportsListCoordinable?
     private var effect: ((SportsListPresenterEffect) -> Void)!
     private var state: SportsListState = .init()
-    @Published private var sports = [SportModel]() {
-        didSet {
-            print(self.$sports)
-        }
-    }
-    let localManager: SportsManagerProtocol
-    let remoteManager: SportsManagerProtocol
+    
+    private let localManager: SportsManagerProtocol
+    private let remoteManager: SportsManagerProtocol
+    
+    @Published private var sports = [SportModel]()
     
     init(
         onStateChange: @escaping (SportsListState) -> Void,
@@ -47,9 +45,17 @@ final class SportsListPresenter {
 }
 
 extension SportsListPresenter {
-    func onAppear() async {
+    func load(type: SelectedStorage = .all) async {
+        var sports = [SportModel]()
         do {
-            let sports = try await self.loadSports()
+            switch type {
+            case .all:
+                sports = try await self.loadSports()
+            case .local:
+                sports = try await self.loadLocalSports()
+            case .remote:
+                sports = try await self.loadRemoteSports()
+            }
             effect(.onLoadAll(sports))
         } catch {
             effect(.onError)
@@ -57,7 +63,11 @@ extension SportsListPresenter {
     }
     
     func didSelectAddSport() {
-        self.coordinator?.didSelectAddSport()
+        effect(.onCreateSportTap)
+    }
+    
+    func didSelectDetail(_ sport: SportModel) {
+        self.coordinator?.didSelectDetail(sport)
     }
     
     func didSelectDelete(index: IndexSet) {
@@ -77,19 +87,18 @@ extension SportsListPresenter {
                         try await self.remoteManager.delete(sport.id)
                         effect(.onDelete)
                     } catch {
-                        print("nelze")
                         effect(.onError)
                     }
                 }
             }
         }
         Task {
-            await self.onAppear()
+            await self.load()
         }
         
     }
     
-    func didTapFilterSports(_ type: Selected) {
+    func didTapFilterSports(_ type: SelectedStorage) {
         switch type {
         case .all:
             effect(.onLoadAll(self.sports))
@@ -109,55 +118,33 @@ extension SportsListPresenter {
         effect(.onLoadRemote(self.sports.filter { $0.isRemote }))
     }
     
-    func onNameChange(_ text: String) {
-        effect(.onNameChange(text))
+    func onSheetDismiss() {
+        effect(.onSheetDismiss)
     }
     
-    func onLocationChange(_ text: String) {
-        effect(.onLocationChange(text))
-    }
-    
-    func onDurationChange(_ text: String) {
-        effect(.onDurationChange(text))
-    }
-    
-    func onSave(storage: SportModel.Storage) async throws {
-        switch storage {
-        case .local:
-            try await self.saveLocal()
-        case .remote:
-            try await self.saveRemote()
-        }
-        self.coordinator?.didSelectSave()
+    func onSaveSuccessReload(storage: SelectedStorage = .all) async {
+        await self.load(type: storage)
     }
 }
 
 private extension SportsListPresenter {
-    func makeSport(storage: SportModel.Storage) -> SportModel {
-        SportModel(
-            id: UUID(),
-            name: state.name,
-            location: state.location,
-            duration: state.duration,
-            storage: storage
-        )
-    }
-    func saveLocal() async throws {
-        try await self.localManager.save(self.makeSport(storage: .local))
+    func loadSports() async throws -> [SportModel] {
+        let remote = try await self.loadRemoteSports()
+        let local = try await self.loadLocalSports()
+        return remote + local
     }
     
-    func saveRemote() async throws {
-        try await self.remoteManager.save(self.makeSport(storage: .remote))
+    func loadLocalSports() async throws -> [SportModel] {
+        try await self.localManager.getAll()
     }
-
-    func loadSports() async throws -> [SportModel] {
-        let remote = try await self.remoteManager.getAll()
-        let local = try await self.localManager.getAll()
-        print(RemoteDatabaseAuth.shared.isSignedIn())
-        return remote + local
+    
+    func loadRemoteSports() async throws -> [SportModel] {
+        try await self.remoteManager.getAll()
     }
 }
 
+
+// MARK: - Reducer
 private extension SportsListPresenter {
     func reducer(effect: SportsListPresenterEffect) {
         switch effect {
@@ -171,16 +158,36 @@ private extension SportsListPresenter {
         case .onDelete:
             self.state.sports = sports
         case .onError:
-            self.state.sports = []
-        case .onNameChange(let text):
-            self.state.name = text
-        case .onLocationChange(let text):
-            self.state.location = text
-        case .onDurationChange(let text):
-            self.state.duration = text
+            self.state.errorViewModel = makeGenericError()
         case .onSelectionChange(let type):
             self.state.selectedType = type
+        case .onCreateSportTap:
+            self.state.isCreateSheetPresented = true
+        case .onSaveSuccess:
+            self.state.isConfirmationDialogPresented = false
+            self.state.isCreateSheetPresented = false
+        case .onSheetDismiss:
+            self.state.isConfirmationDialogPresented = false
+            self.state.isCreateSheetPresented = false
         }
-        onStateChange(state)
+        self.onStateChange(state)
+    }
+    
+    func makeGenericError() -> ErrorViewModel {
+        ErrorViewModel(
+            title: "Error",
+            message: "Something went wrong",
+            actions: [
+                AlertActionViewModel(
+                    title: "Repeat",
+                    buttonRole: .cancel,
+                    action: {
+                        Task {
+                            await self.load()
+                        }
+                    }
+                )
+            ]
+        )
     }
 }

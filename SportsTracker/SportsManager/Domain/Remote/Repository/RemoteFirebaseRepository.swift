@@ -5,13 +5,9 @@ final class RemoteFirebaseRepository {
     private let database = Firestore.firestore()
     
     func save(_ sport: SportModel) async throws {
-        do {
-            try await database.collection("SportsRemote")
-                .document(sport.id.uuidString)
-                .setData(sport.remote)
-        } catch {
-            throw error
-        }
+        try await database.collection("SportsRemote")
+            .document(sport.id.uuidString)
+            .setData(sport.remote)
     }
     
     func fetchAll() async throws -> [RemoteSportModel] {
@@ -24,12 +20,8 @@ final class RemoteFirebaseRepository {
     }
     
     func delete(_ id: SportModel.ID) async throws {
-        do {
-            try await database.collection("SportsRemote")
-                .document(id.uuidString)
-                .delete()
-        } catch {
-            throw error
-        }
+        try await database.collection("SportsRemote")
+            .document(id.uuidString)
+            .delete()
     }
 }
