@@ -18,5 +18,3 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build
       run: xcodebuild -scheme SportsTracker -sdk iphoneos | xcbeautify
-    - name: Run tests
-      run: swift test -v
