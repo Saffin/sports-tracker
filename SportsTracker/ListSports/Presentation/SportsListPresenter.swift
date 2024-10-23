@@ -60,7 +60,32 @@ extension SportsListPresenter {
         self.coordinator?.didSelectAddSport()
     }
     
-    func didSelectDelete() {
+    func didSelectDelete(index: IndexSet) {
+        index.map { sports[$0] }.forEach { sport in
+            if sport.isLocal {
+                Task {
+                    do {
+                        try await self.localManager.delete(sport.id)
+                        effect(.onDelete)
+                    } catch {
+                        effect(.onError)
+                    }
+                }
+            } else {
+                Task {
+                    do {
+                        try await self.remoteManager.delete(sport.id)
+                        effect(.onDelete)
+                    } catch {
+                        print("nelze")
+                        effect(.onError)
+                    }
+                }
+            }
+        }
+        Task {
+            await self.onAppear()
+        }
         
     }
     

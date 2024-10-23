@@ -22,4 +22,14 @@ final class RemoteFirebaseRepository {
             try document.data(as: RemoteSportModel.self)
         }
     }
+    
+    func delete(_ id: SportModel.ID) async throws {
+        do {
+            try await database.collection("SportsRemote")
+                .document(id.uuidString)
+                .delete()
+        } catch {
+            throw error
+        }
+    }
 }

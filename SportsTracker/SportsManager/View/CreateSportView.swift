@@ -41,9 +41,18 @@ struct CreateSportView: View {
                 placeholder: "Duration"
             )
 
-            Button("Save") {
+            Button("Local") {
                 Task {
                     try await self.store.actions?.onSave(storage: .local)
+                }
+            }
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(13)
+            Button("Remote") {
+                Task {
+                    try await self.store.actions?.onSave(storage: .remote)
                 }
             }
             .padding()

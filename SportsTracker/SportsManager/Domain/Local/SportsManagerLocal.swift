@@ -28,7 +28,16 @@ final class SportsManagerLocal: SportsManagerProtocol {
         }
     }
     
-    func delete(_ sport: SportModel) async throws {
-        //
+    func delete(_ id: SportModel.ID) async throws {
+        let fetchRequest: NSFetchRequest<ManagedSport> = ManagedSport.fetchRequest() as! NSFetchRequest<ManagedSport>
+        // find item based on id
+        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        do {
+            let sports = try self.viewContext.fetch(fetchRequest)
+            sports.forEach { self.viewContext.delete($0) }
+            try self.viewContext.save()
+        } catch {
+            throw error
+        }
     }
 }

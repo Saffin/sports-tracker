@@ -7,8 +7,8 @@ final class SportsManagerRemote: SportsManagerProtocol {
        try await self.repository.save(sport)
     }
     
-    func delete(_ sport: SportModel) async throws {
-//        try await self.repository.delete(sport)
+    func delete(_ id: SportModel.ID) async throws {
+        try await self.repository.delete(id)
     }
     
     func getAll() async throws -> [SportModel] {
