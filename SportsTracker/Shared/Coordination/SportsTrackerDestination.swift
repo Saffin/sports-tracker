@@ -37,3 +37,17 @@ extension SportsTrackerCoordinator: SportsListCoordinable {
         self.navigation.append(SportsTrackerDestination.detail(sport))
     }
 }
+
+extension SportsTrackerCoordinator {
+    func logIn() async {
+        do {
+            if !RemoteDatabaseAuth.shared.isSignedIn() {
+                try await RemoteDatabaseAuth.shared.signInAnonymously()
+            } else {
+                debugPrint("Already signed")
+            }
+        } catch {
+            debugPrint("Error signing in anonymously: \(error)")
+        }
+    }
+}

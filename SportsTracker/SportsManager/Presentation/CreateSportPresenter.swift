@@ -7,7 +7,8 @@ private enum CreateSportPresenterEffect {
     case onSaveFailure
     case onNameChange(String)
     case onLocationChange(String)
-    case onDurationChange(String)
+    case onHoursChange(Int)
+    case onMinutesChange(Int)
     case showLoading
     case hideLoading
 }
@@ -65,8 +66,12 @@ extension CreateSportPresenter {
         effect(.onLocationChange(text))
     }
     
-    func onDurationChange(_ text: String) {
-        effect(.onDurationChange(text))
+    func onHoursChange(_ value: Int) {
+        effect(.onHoursChange(value))
+    }
+    
+    func onMinutesChange(_ value: Int) {
+        effect(.onMinutesChange(value))
     }
 }
 
@@ -84,7 +89,7 @@ private extension CreateSportPresenter {
             id: UUID(),
             name: state.name,
             location: state.location,
-            duration: state.duration,
+            duration: self.makeDuration(),
             storage: storage
         )
     }
@@ -92,7 +97,19 @@ private extension CreateSportPresenter {
     func clearSport() {
         self.state.name = ""
         self.state.location = ""
-        self.state.duration = ""
+        self.state.selectedHours = 0
+        self.state.selectedMinutes = 0
+    }
+    
+    func makeDuration() -> String {
+        let hours = self.state.selectedHours
+        let minutes = self.state.selectedMinutes
+        
+        if hours == 0 {
+            return "\(minutes) minutes"
+        } else {
+            return "\(hours) hours \(minutes) minutes"
+        }
     }
     
     func makeGenericError() -> ErrorViewModel {
@@ -124,8 +141,10 @@ private extension CreateSportPresenter {
             self.state.name = text
         case .onLocationChange(let text):
             self.state.location = text
-        case .onDurationChange(let text):
-            self.state.duration = text
+        case .onHoursChange(let text):
+            self.state.selectedHours = text
+        case .onMinutesChange(let text):
+            self.state.selectedMinutes = text
         case .showLoading:
             self.state.isLoading = true
         case .hideLoading:

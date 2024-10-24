@@ -5,9 +5,14 @@ struct CreateSportView: View {
     @ObservedObject var store: CreateSportStore
     let onDismiss: () -> Void
     
+    let hours = Array(0...12)
+    let minutes = Array(0...59)
+    
     var body: some View {
         NavigationStack {
             self.contentView
+                .padding()
+                .frame(maxWidth: .infinity)
                 .padding()
                 .navigationTitle("Add record")
                 .toolbar {
@@ -27,17 +32,21 @@ struct CreateSportView: View {
 
 private extension CreateSportView {
     var contentView: some View {
-        VStack {
+        VStack(spacing: 32) {
+            Text("Create Sports Record")
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom)
+            
             self.nameInput
-                .padding()
             self.locationInput
+            self.pickerInput
                 .padding()
-            self.durationInput
-                .padding()
+            
             Spacer()
         }
     }
-
+    
     var confirmationButtons: some View {
         Group {
             Button("Local") {
@@ -87,8 +96,7 @@ private extension CreateSportView {
                     self.store.actions?.onNameChange(text)
                 }
             ),
-            placeholder: "Name",
-            keyboardType: .alphabet
+            placeholder: "Name"
         )
     }
     
@@ -100,22 +108,50 @@ private extension CreateSportView {
                     self.store.actions?.onLocationChange(text)
                 }
             ),
-            placeholder: "Location",
-            keyboardType: .alphabet
+            placeholder: "Location"
         )
     }
     
-    var durationInput: some View {
-        InputView(
-            text: Binding(
-                get: { store.state.duration },
-                set: { text in
-                    self.store.actions?.onDurationChange(text)
-                }
-            ),
-            placeholder: "Duration",
-            keyboardType: .numberPad
-        )
+    var pickerInput: some View {
+        HStack {
+            VStack {
+                Text("Hours")
+                    .font(.headline)
+                Picker(
+                    "Hours",
+                    selection: Binding(
+                        get: { self.store.state.selectedHours },
+                        set: { text in
+                            self.store.actions?.onHoursChange(text)
+                        }
+                    )) {
+                        ForEach(minutes, id: \.self) { minute in
+                            Text("\(minute) m")
+                        }
+                    }
+                .pickerStyle(WheelPickerStyle())
+                .frame(width: 100)
+            }
+            
+            VStack {
+                Text("Minutes")
+                    .font(.headline)
+                Picker(
+                    "Minutes",
+                    selection: Binding(
+                        get: { self.store.state.selectedMinutes },
+                        set: { text in
+                            self.store.actions?.onMinutesChange(text)
+                        }
+                    )) {
+                        ForEach(minutes, id: \.self) { minute in
+                            Text("\(minute) m")
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(width: 100)
+            }
+        }
     }
 }
 

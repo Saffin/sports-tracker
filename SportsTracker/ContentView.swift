@@ -13,7 +13,9 @@ struct ContentView: View {
         }
         .navigationTitle("Sports Tracker")
         .task {
-            try! await RemoteDatabaseAuth.shared.signInAnonymously()
+            // just to simulate the login process
+            // and make it easy
+            await self.coordinator.logIn()
         }
     }
 }

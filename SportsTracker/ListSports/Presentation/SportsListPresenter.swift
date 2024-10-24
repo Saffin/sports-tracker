@@ -129,7 +129,6 @@ private extension SportsListPresenter {
     }
 }
 
-
 // MARK: - Reducer
 private extension SportsListPresenter {
     func reducer(effect: SportsListPresenterEffect) {
