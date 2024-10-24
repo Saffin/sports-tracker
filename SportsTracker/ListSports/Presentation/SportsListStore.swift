@@ -5,6 +5,7 @@ final class SportsListStore: ObservableObject, ViewStore {
     @Published var selectedType: SelectedStorage = .all
     @Published var isCreateSheetPresented = false
     @Published var isErrorShown = false
+    @Published var alert: ErrorViewModel?
     var actions: SportsListPresenter?
 }
 
@@ -15,6 +16,7 @@ extension SportsListStore {
             self.selectedType = state.selectedType
             self.isCreateSheetPresented = state.isCreateSheetPresented
             self.isErrorShown = state.isErrorShown
+            self.alert = state.errorViewModel
         }
     }
 }

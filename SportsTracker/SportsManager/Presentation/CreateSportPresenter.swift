@@ -115,14 +115,7 @@ private extension CreateSportPresenter {
     func makeGenericError() -> ErrorViewModel {
         ErrorViewModel(
             title: "Error",
-            message: "Something went wrong",
-            actions: [
-                AlertActionViewModel(
-                    title: "OK",
-                    buttonRole: .cancel,
-                    action: {}
-                )
-            ]
+            message: "Something went wrong"
         )
     }
 }

@@ -10,6 +10,7 @@ enum SelectedStorage: String, CaseIterable, Identifiable {
 
 struct SportsListView: View {
     @StateObject var store: SportsListStore
+    @State var isErrorShown = false
     
     var body: some View {
         ZStack {
@@ -43,19 +44,18 @@ struct SportsListView: View {
                 onDismiss: self.store.actions?.onSheetDismiss ?? {}
             )
         }
-        //        .alert(
-        //            self.store.state.errorViewModel?.title ?? "Error",
-        //            isPresented: self.$store.isErrorShown,
-        //            actions: {
-        //                ForEach(store.state.errorViewModel?.actions ?? [], id: \.title) { viewModel in
-        //                    Button(viewModel.title,
-        //                           role: viewModel.buttonRole,
-        //                           action: viewModel.action ?? {}
-        //                    )
-        //                }
-        //            },
-        //            message: self.store.state.errorViewModel?.message ?? ""
-        //        )
+        .alert(isPresented: self.$store.isErrorShown) {
+            Alert(
+                title: Text(self.store.state.errorViewModel?.title ?? ""),
+                message: Text(self.store.state.errorViewModel?.message ?? ""),
+                primaryButton: .default(Text("Retry"), action: {
+                    Task {
+                        await self.store.actions?.load()
+                    }
+                }),
+                secondaryButton: .cancel(Text("Cancel"))
+            )
+        }
     }
 }
 

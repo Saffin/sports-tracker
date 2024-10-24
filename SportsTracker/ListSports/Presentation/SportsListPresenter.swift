@@ -6,6 +6,7 @@ private enum SportsListPresenterEffect {
     case onLoadLocal([SportModel])
     case onLoadRemote([SportModel])
     case onError
+    case onErrorClose
     case onSelectionChange(SelectedStorage)
     case onCreateSportTap
     case onSheetDismiss
@@ -143,6 +144,8 @@ private extension SportsListPresenter {
             self.state.sports = []
         case .onError:
             self.state.errorViewModel = makeGenericError()
+        case .onErrorClose:
+            self.state.errorViewModel = nil
         case .onSelectionChange(let type):
             self.state.selectedType = type
         case .onCreateSportTap:
@@ -162,18 +165,7 @@ private extension SportsListPresenter {
     func makeGenericError() -> ErrorViewModel {
         ErrorViewModel(
             title: "Error",
-            message: "Something went wrong",
-            actions: [
-                AlertActionViewModel(
-                    title: "Repeat",
-                    buttonRole: .cancel,
-                    action: {
-                        Task {
-                            await self.load()
-                        }
-                    }
-                )
-            ]
+            message: "Something went wrong"
         )
     }
 }
