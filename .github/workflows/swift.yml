@@ -17,4 +17,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
-      run: xcodebuild -scheme SportsTracker -sdk iphoneos | xcbeautify
+      run: xcodebuild -scheme SportsTracker -sdk iphoneos -allowProvisioningUpdates | xcbeautify
