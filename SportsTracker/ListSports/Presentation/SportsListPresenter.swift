@@ -65,26 +65,18 @@ extension SportsListPresenter {
     
     func didSelectDelete(index: IndexSet) {
         index.map { sports[$0] }.forEach { sport in
-            if sport.isLocal {
-                Task {
-                    do {
-                        try await self.localManager.delete(sport.id)
-                    } catch {
-                        effect(.onError)
-                    }
-                }
-            } else {
-                Task {
-                    do {
-                        try await self.remoteManager.delete(sport.id)
-                    } catch {
-                        effect(.onError)
-                    }
-                }
+            Task {
+                await self.delete(id: sport)
+                await self.load()
             }
         }
-        Task {
-            await self.load()
+    }
+    
+    func delete(id: SportModel) async {
+        do {
+            id.isLocal ? try await self.localManager.delete(id.id) : try await self.remoteManager.delete(id.id)
+        } catch {
+            effect(.onError)
         }
     }
     
