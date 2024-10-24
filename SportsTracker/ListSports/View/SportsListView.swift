@@ -9,7 +9,7 @@ enum SelectedStorage: String, CaseIterable, Identifiable {
 }
 
 struct SportsListView: View {
-    @ObservedObject var store: SportsListStore
+    @StateObject var store: SportsListStore
     
     var body: some View {
         ZStack {
@@ -17,17 +17,7 @@ struct SportsListView: View {
             if self.store.state.isLoading {
                 ProgressView()
             } else {
-                VStack {
-                    self.picker
-                        .padding()
-                    if self.$store.state.sports.isEmpty {
-                        Text("No records found. You can add one by pressing the plus button")
-                            .padding()
-                    } else {
-                        self.list
-                    }
-                    Spacer()
-                }
+                self.contentView
             }
         }
         .toolbar {
@@ -37,11 +27,13 @@ struct SportsListView: View {
             await self.store.actions?.load()
         }
         .refreshable {
-            await self.store.actions?.reloadData()
+            await self.store.actions?.load()
         }
         .navigationTitle("Sports Tracker")
         .onChange(of: self.store.selectedType) { _, selectedSport in
-            self.store.actions?.didTapFilterSports(selectedSport)
+            Task {
+                await self.store.actions?.didTapFilterSports(selectedSport)
+            }
         }
         .sheet(isPresented: self.$store.state.isCreateSheetPresented, onDismiss: {
             self.store.actions?.onSheetDismiss()
@@ -68,6 +60,20 @@ struct SportsListView: View {
 }
 
 private extension SportsListView {
+    var contentView: some View {
+        VStack {
+            self.picker
+                .padding()
+            if self.$store.state.sports.isEmpty {
+                Text("No records found. You can add one by pressing the plus button")
+                    .padding()
+            } else {
+                self.list
+            }
+            Spacer()
+        }
+    }
+    
     var picker: some View {
         VStack {
             Picker("", selection: self.$store.selectedType) {

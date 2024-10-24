@@ -47,7 +47,8 @@ extension SportsListPresenter {
         effect(.showLoading)
         do {
             let sports = try await self.loadSports()
-            effect(.onLoadAll(sports))
+            self.sports = sports
+            effect(.onLoadAll(showFilteredSports()))
         } catch {
             effect(.onError)
         }
@@ -63,7 +64,6 @@ extension SportsListPresenter {
     }
     
     func didSelectDelete(index: IndexSet) {
-        effect(.showLoading)
         index.map { sports[$0] }.forEach { sport in
             if sport.isLocal {
                 Task {
@@ -84,51 +84,28 @@ extension SportsListPresenter {
             }
         }
         Task {
-            await self.reloadData()
+            await self.load()
         }
-        effect(.hideLoading)
     }
     
-    func didTapFilterSports(_ type: SelectedStorage) {
+    func didTapFilterSports(_ type: SelectedStorage) async {
         switch type {
         case .all:
             effect(.onLoadAll(self.sports))
         case .local:
-            effect(.onLoadLocal(self.sports.filter { $0.isLocal }))
+            let filtered = self.sports.filter { $0.isLocal }
+            effect(.onLoadLocal(filtered))
         case .remote:
-            effect(.onLoadRemote(self.sports.filter { $0.isRemote }))
+            let filtered = self.sports.filter { $0.isRemote }
+            effect(.onLoadRemote(filtered))
         }
         effect(.onSelectionChange(type))
     }
     
-    func didSelectLocal() async {
-        effect(.onLoadLocal(self.sports.filter { $0.isLocal }))
-    }
-    
-    func didSelectRemote() async {
-        effect(.onLoadRemote(self.sports.filter { $0.isRemote }))
-    }
-    
     func onSheetDismiss() {
         Task {
-            await self.reloadData()
+            await self.load()
             effect(.onSheetDismiss)
-        }
-    }
-    
-    func reloadData() async {
-        do {
-            let sports = try await self.loadSports()
-            switch self.state.selectedType {
-            case .all:
-                effect(.onLoadAll(sports))
-            case .local:
-                effect(.onLoadLocal(sports.filter { $0.isLocal }))
-            case .remote:
-                effect(.onLoadRemote(sports.filter { $0.isRemote }))
-            }
-        } catch {
-            effect(.onError)
         }
     }
 }
@@ -147,6 +124,17 @@ private extension SportsListPresenter {
     func loadRemoteSports() async throws -> [SportModel] {
         try await self.remoteManager.getAll()
     }
+    
+    func showFilteredSports() -> [SportModel] {
+        switch self.state.selectedType {
+        case .all:
+            return self.sports
+        case .local:
+            return self.sports.filter { $0.isLocal }
+        case .remote:
+            return self.sports.filter { $0.isRemote }
+        }
+    }
 }
 
 
@@ -155,14 +143,13 @@ private extension SportsListPresenter {
     func reducer(effect: SportsListPresenterEffect) {
         switch effect {
         case .onLoadAll(let sports):
-            self.sports = sports
             self.state.sports = sports
         case .onLoadLocal(let sports):
-            self.state.sports = sports
+            self.state.sports = sports.filter { $0.isLocal }
         case .onLoadRemote(let sports):
-            self.state.sports = sports
+            self.state.sports = sports.filter { $0.isRemote }
         case .onDelete:
-            self.state.sports = sports
+            self.state.sports = []
         case .onError:
             self.state.errorViewModel = makeGenericError()
         case .onSelectionChange(let type):
